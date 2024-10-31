@@ -1,0 +1,75 @@
+---
+import Layout from '../layouts/Layout.astro';
+// Aquí podrías importar o definir tu lista de juegos
+const juegos = [
+  { id: 1, titulo: "The Legend of Zelda", plataforma: "Nintendo Switch" },
+  { id: 2, titulo: "God of War", plataforma: "PlayStation 5" },
+  { id: 3, titulo: "Assassin's Creed", plataforma: "Xbox" },
+  { id: 4, titulo: "The Witcher", plataforma: "Xbox" },
+  { id: 5, titulo: "Minecraft", plataforma: "Xbox" },
+  { id: 6, titulo: "Grand Theft Auto", plataforma: "Xbox" },
+  { id: 7, titulo: "Call of Duty", plataforma: "Xbox" },
+  { id: 8, titulo: "Red Dead Redemption", plataforma: "Xbox" },
+  { id: 9, titulo: "Assassin's Creed Odyssey", plataforma: "Xbox" },
+  { id: 10, titulo: "The Witcher 3: Wild Hunt", plataforma: "Xbox" },
+  { id: 11, titulo: "League of Legends", plataforma: "PC" },
+  { id: 12, titulo: "Overwatch", plataforma: "PC" },
+  { id: 13, titulo: "Dota 2", plataforma: "PC" },
+  { id: 14, titulo: "Fortnite", plataforma: "PC" },
+  { id: 15, titulo: "Rocket League", plataforma: "PC" },
+  { id: 16, titulo: "Apex Legends", plataforma: "PC" },
+  { id: 17, titulo: "Minecraft", plataforma: "PC" },
+  { id: 18, titulo: "Grand Theft Auto", plataforma: "PC" },
+  { id: 19, titulo: "Call of Duty", plataforma: "PC" },
+  { id: 20, titulo: "Red Dead Redemption", plataforma: "Epic Games" },
+  { id: 21, titulo: "Assassin's Creed Odyssey", plataforma: "Steam" },
+  { id: 22, titulo: "The Witcher 3: Wild Hunt", plataforma: "GOG" },
+  { id: 23, titulo: "League of Legends", plataforma: "Epic Games" },
+  { id: 24, titulo: "Overwatch", plataforma: "Epic Games" },
+  { id: 25, titulo: "The Legend of Zelda", plataforma: "Nintendo Switch" },
+  { id: 26, titulo: "God of War", plataforma: "PlayStation 5" },
+  { id: 27, titulo: "Assassin's Creed", plataforma: "Xbox" },
+  { id: 28, titulo: "The Witcher", plataforma: "Xbox" },
+  { id: 29, titulo: "Minecraft", plataforma: "Xbox" },
+  { id: 30, titulo: "Grand Theft Auto", plataforma: "Xbox" },
+  { id: 31, titulo: "Call of Duty", plataforma: "Xbox" },
+  { id: 32, titulo: "Red Dead Redemption", plataforma: "Xbox" },
+  { id: 33, titulo: "Assassin's Creed Odyssey", plataforma: "Xbox" },
+  { id: 34, titulo: "The Witcher 3: Wild Hunt", plataforma: "Xbox" },
+  { id: 35, titulo: "League of Legends", plataforma: "PC" },
+  { id: 36, titulo: "Overwatch", plataforma: "PC" },
+  { id: 37, titulo: "Dota 2", plataforma: "PC" },
+  { id: 38, titulo: "Fortnite", plataforma: "PC" },
+  { id: 39, titulo: "Rocket League", plataforma: "PC" },
+  { id: 40, titulo: "Apex Legends", plataforma: "PC" },
+  { id: 41, titulo: "Minecraft", plataforma: "PC" },
+  { id: 42, titulo: "Grand Theft Auto", plataforma: "PC" },
+  { id: 43, titulo: "Call of Duty", plataforma: "PC" },
+  { id: 44, titulo: "Red Dead Redemption", plataforma: "Epic Games" },
+  { id: 45, titulo: "Assassin's Creed Odyssey", plataforma: "Steam" },
+  { id: 46, titulo: "The Witcher 3: Wild Hunt", plataforma: "GOG" },
+  { id: 47, titulo: "League of Legends", plataforma: "Epic Games" },
+  { id: 48, titulo: "Overwatch", plataforma: "Epic Games" },
+  { id: 49, titulo: "The Legend of Zelda", plataforma: "Nintendo Switch" },
+  { id: 50, titulo: "God of War", plataforma: "PlayStation 5" },
+  // ... más juegos
+];
+---
+
+<Layout title="Biblioteca - GameLib">
+  <main class="container mx-auto mt-8">
+    <h1 class="text-3xl font-bold mb-6">Mi Biblioteca de Juegos</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
+      {juegos.map((juego) => (
+        <div class="bg-gray-600 shadow-md rounded-lg p-4">
+          <h2 class="text-xl font-semibold">{juego.titulo}</h2>
+          <p class="text-white">{juego.plataforma}</p>
+          <div class="mt-4">
+            {/* <button class="text-blue-600 hover:text-blue-800 mr-2">Editar</button>
+            <button class="text-red-600 hover:text-red-800">Eliminar</button> */}
+          </div>
+        </div>
+      ))}
+    </div>
+  </main>
+</Layout>
