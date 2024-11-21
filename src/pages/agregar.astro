@@ -1,20 +1,145 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+
+const API_BASE_URL = 'http://localhost:3000';
+
+let platforms = [];
+
+try {
+  const response = await fetch(`${API_BASE_URL}/platforms`);
+  platforms = await response.json();
+} catch (error) {
+  console.error('Error fetching platforms:', error);
+}
 ---
 
 <Layout title="Agregar Juego - GameLib">
   <main class="container mx-auto mt-8">
     <h1 class="text-3xl font-bold mb-6">Agregar Nuevo Juego</h1>
-    <form class="max-w-md mx-auto">
+    <form id="add-game-form" class="max-w-md mx-auto">
       <div class="mb-4">
-        <label for="titulo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Título del Juego</label>
-        <input type="text" id="titulo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre del Juego</label>
+        <input type="text" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required autocomplete="off">
+        <ul id="suggestions" class="bg-white border border-gray-300 mt-2 rounded-lg max-h-40 overflow-y-auto shadow-lg hidden">
+          <!-- Las sugerencias se añadirán aquí dinámicamente -->
+        </ul>
       </div>
       <div class="mb-4">
         <label for="plataforma" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Plataforma</label>
-        <input type="text" id="plataforma" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+        <select id="plataforma" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+          {platforms.map((platform: { id: string | number | string[] | null | undefined; name: unknown; }) => (
+            <option value={platform.id}>{platform.name}</option>
+          ))}
+        </select>
       </div>
       <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Agregar Juego</button>
     </form>
   </main>
 </Layout>
+
+<script is:inline define:vars={{API_BASE_URL}}>
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const nombreInput = document.getElementById('name');
+    const suggestionsList = document.getElementById('suggestions');
+    const form = document.getElementById('add-game-form');
+
+    if (nombreInput) {
+      nombreInput.addEventListener('input', async (event) => {
+        const target = event.target;
+        const searchTerm = target ? target.value : '';
+        if (suggestionsList) {
+          suggestionsList.innerHTML = ''; // Limpia las sugerencias actuales
+          suggestionsList.classList.add('hidden'); // Oculta la lista de sugerencias
+        }
+
+        if (searchTerm.length > 2) {
+          try {
+            const response = await fetch(`${API_BASE_URL}/games/search?search=${searchTerm}`);
+            const games = await response.json();
+            const suggestions = games.map((game) => game.name);
+
+            suggestions.forEach((suggestion) => {
+              const li = document.createElement('li');
+              li.textContent = suggestion;
+              li.classList.add('p-2', 'hover:bg-gray-200', 'cursor-pointer', 'text-gray-900');
+              li.addEventListener('click', () => {
+                if (suggestion !== null) {
+                  nombreInput.value = suggestion;
+                }
+                if (suggestionsList) {
+                  suggestionsList.innerHTML = ''; // Limpia las sugerencias después de seleccionar
+                  suggestionsList.classList.add('hidden'); // Oculta la lista de sugerencias
+                }
+              });
+              if (suggestionsList) {
+                suggestionsList.appendChild(li);
+              }
+            });
+
+            if (suggestions.length > 0) {
+              if (suggestionsList) {
+                suggestionsList.classList.remove('hidden'); // Muestra la lista de sugerencias si hay elementos
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching games:', error);
+          }
+        }
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Evita que el formulario se recargue
+
+        const nombre = nombreInput ? nombreInput.value : '';
+        const plataformaElement = document.getElementById('plataforma');
+        const plataforma = plataformaElement ? plataformaElement.value : '';
+        const userId = 'bbeddf27-6bb3-4745-9a96-bb0f44f39154'; // Reemplaza esto con el UUID del usuario actual // TODO: Obtener el UUID del usuario actual
+
+        try {
+          // Añadir el juego a la tabla games
+          const response = await fetch(`${API_BASE_URL}/games`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: nombre }), // Asegúrate de usar los nombres de propiedades correctos
+          });
+
+          if (response.ok) {
+            const game = await response.json();
+
+            // Añadir la relación a la tabla user_games
+            const userGameResponse = await fetch(`${API_BASE_URL}/user-games`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ userId: userId, gameId: game.id }), // Asegúrate de usar el userId correcto // , platformId: plataforma 
+            });
+
+            if (userGameResponse.ok) {
+              alert('Juego agregado con éxito');
+              form.reset(); // Reinicia el formulario
+              if (suggestionsList) {
+                suggestionsList.innerHTML = ''; // Limpia las sugerencias
+                suggestionsList.classList.add('hidden'); // Oculta la lista de sugerencias
+              }
+            } else {
+              const errorData = await userGameResponse.json();
+              alert(`Error al agregar el juego a user_games: ${errorData.message}`);
+            }
+          } else {
+            const errorData = await response.json();
+            alert(`Error al agregar el juego: ${errorData.message}`);
+          }
+        } catch (error) {
+          console.error('Error al agregar el juego:', error);
+          alert('Error al agregar el juego');
+        }
+      });
+    }
+  });
+</script>
