@@ -5,10 +5,11 @@ const API_BASE_URL = 'http://localhost:3000';
 const GAMES_PER_PAGE = 9; // Límite inicial
 
 let juegos: { id: any; cover: any; title: unknown; description: any; }[] = []; // TODO: Crear interfaz para juegos
+let offset = 0;
 
 async function fetchGames() {
   try {
-    const response = await fetch(`${API_BASE_URL}/games?limit=${GAMES_PER_PAGE}`);
+    const response = await fetch(`${API_BASE_URL}/games?limit=${GAMES_PER_PAGE}&offset=${offset}`);
     juegos = await response.json();
   } catch (error) {
     console.error('Error fetching games:', error);
@@ -50,11 +51,23 @@ await fetchGames();
         </li>
       ))}
     </ul>
+
+    <!-- Paginación -->
+    <div class="flex justify-between items-center mt-6">
+        <button id="prev-page" class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-900" disabled={offset === 0}>
+          Anterior
+        </button>
+        <button id="next-page" class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-900">
+          Siguiente
+        </button>
+    </div>
+
   </main>
 </Layout>
 
 <script is:inline define:vars={{API_BASE_URL, GAMES_PER_PAGE}}>
   let limit = GAMES_PER_PAGE;
+  let offset = 0;
 
   document.getElementById('add-game-button').addEventListener('click', () => {
     window.location.href = '/agregar';
@@ -63,12 +76,25 @@ await fetchGames();
   document.getElementById('limit-slider').addEventListener('input', async (event) => {
     limit = event.target.value;
     document.getElementById('limit-value').textContent = limit;
+    offset = 0; // Reiniciar el offset al cambiar el límite
+    await fetchGames();
+  });
+
+  document.getElementById('prev-page').addEventListener('click', async () => {
+    if (offset > 0) {
+      offset -= limit;
+      await fetchGames();
+    }
+  });
+
+  document.getElementById('next-page').addEventListener('click', async () => {
+    offset += limit;
     await fetchGames();
   });
 
   async function fetchGames() {
     try {
-      const response = await fetch(`${API_BASE_URL}/games?limit=${limit}`);
+      const response = await fetch(`${API_BASE_URL}/games?limit=${limit}&offset=${offset}`);
       const juegos = await response.json();
 
       const gamesList = document.getElementById('games-list');
@@ -90,6 +116,9 @@ await fetchGames();
         `;
         gamesList.appendChild(li);
       });
+
+      document.getElementById('prev-page').disabled = offset === 0;
+      document.getElementById('next-page').disabled = juegos.length < limit;
     } catch (error) {
       console.error('Error fetching games:', error);
     }
