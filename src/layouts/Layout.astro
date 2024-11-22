@@ -17,8 +17,47 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <!-- <script>
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+      } else {
+          document.documentElement.classList.remove('dark')
+      }
+
+      
+    </script> -->
+
+    <!-- <script>
+      // Al cargar la página, prioriza la preferencia del usuario almacenada en localStorage
+      if (localStorage.getItem('color-theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else if (localStorage.getItem('color-theme') === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // Si no hay preferencia en localStorage, usa la preferencia del sistema
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script> -->
+
+    <script is:inline>
+      function applyTheme() {
+        const userTheme = localStorage.getItem('color-theme');
+        const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  
+        if (userTheme === 'dark' || (!userTheme && systemPreference === 'dark')) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+  
+      applyTheme();
+    </script>
   </head>
-  <body class="flex flex-col min-h-screen">
+  <body class="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900">
     <Navbar />
     <main class="flex-grow">
       <slot />
@@ -28,11 +67,11 @@ const { title } = Astro.props;
 </html>
 
 <style>
-    @media (prefers-color-scheme: dark) { 
+    /* @media (prefers-color-scheme: dark) { 
         body { 
             background-color: rgb(34, 34, 59); color: #ffffff; 
         } 
-    }
+    } */
 
     @view-transition {
       navigation: auto;
