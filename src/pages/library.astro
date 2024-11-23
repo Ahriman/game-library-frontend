@@ -1,9 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import { API_BASE_URL } from '@/config/config.ts';
 
-// export const prerender = false;
-
-const API_BASE_URL = 'http://localhost:3000';
 const GAMES_PER_PAGE = 9; // Límite inicial
 
 export interface Game {
