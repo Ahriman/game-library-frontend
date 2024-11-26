@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import EmailIcon from '../icons/EmailIcon.astro';
+import PasswordIcon from '../icons/PasswordIcon.astro';
 import { API_BASE_URL } from '@/config/config.ts';
 
 const handleLogin = async (event: any) => {
@@ -37,14 +39,31 @@ const handleLogin = async (event: any) => {
     <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow dark:bg-gray-800">
       <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-white">Iniciar Sesión</h2>
       <form id="loginForm" class="space-y-6">
-        <div>
+        <!-- <div>
           <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo electrónico</label>
           <input type="email" id="email" name="email" required class="w-full px-3 py-2 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+        </div> -->
+
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo electrónico</label>
+          <div class="relative mt-1">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+              <EmailIcon />
+            </div>
+            <input type="email" id="email" name="email" required autofocus class="input-field" placeholder="name@gmail.com">
+          </div>
         </div>
+
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
-          <input type="password" id="password" name="password" required class="w-full px-3 py-2 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+          <div class="relative">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+              <PasswordIcon />
+            </div>
+            <input type="password" id="password" name="password" required class="input-field" placeholder="••••••••">
+          </div>
         </div>
+
         <button type="submit" class="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Iniciar Sesión</button>
       </form>
       <p class="text-sm text-center text-gray-600 dark:text-gray-400">¿No tienes una cuenta? <a href="/register" class="text-blue-500 hover:underline">Regístrate</a></p>
@@ -52,34 +71,39 @@ const handleLogin = async (event: any) => {
   </div>
 </Layout>
 
+<style>
+  .input-field {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+  }
+</style>
 
 <script is:inline define:vars={{API_BASE_URL}}>
-    document.getElementById('loginForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const data = Object.fromEntries(formData.entries());
+  document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
 
-        try {
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+      });
 
-        if (response.ok) {
-            const { token } = await response.json();
-            localStorage.setItem('token', token);
-            alert('Inicio de sesión exitoso.');
-            window.location.href = '/';
-        } else {
-            const errorData = await response.json();
-            alert(`Error: ${errorData.message}`);
-        }
-        } catch (error) {
-        console.error('Error al iniciar sesión:', error);
-        alert('Error al iniciar sesión.');
-        }
-    });
+      if (response.ok) {
+          const { token } = await response.json();
+          localStorage.setItem('token', token);
+          alert('Inicio de sesión exitoso.');
+          window.location.href = '/';
+      } else {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      alert('Error al iniciar sesión.');
+    }
+  });
 </script>

@@ -1,33 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from '@/layouts/Layout.astro';
 import { API_BASE_URL } from '@/config/config.ts';
-
-const handleRegister = async (event: Event) => {
-  event.preventDefault();
-  const formData = new FormData(event.target as HTMLFormElement);
-  const data = Object.fromEntries(formData.entries());
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (response.ok) {
-      alert('Registro exitoso. Por favor, inicia sesión.');
-      window.location.href = '/login';
-    } else {
-      const errorData = await response.json();
-      alert(`Error: ${errorData.message}`);
-    }
-  } catch (error) {
-    console.error('Error al registrar:', error);
-    alert('Error al registrar.');
-  }
-};
+import { EmailIcon, PasswordIcon } from '@/icons';
 ---
 
 <Layout title="Registro">
@@ -35,13 +9,51 @@ const handleRegister = async (event: Event) => {
     <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow dark:bg-gray-800">
       <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-white">Crear una cuenta</h2>
       <form id="registerForm" class="space-y-6">
+
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo electrónico</label>
-          <input type="email" id="email" name="email" required autofocus class="w-full px-3 py-2 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+          <div class="relative mt-1">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+              <EmailIcon />
+            </div>
+            <input type="email" 
+              id="email" 
+              name="email" 
+              required 
+              autofocus 
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+              placeholder="name@gmail.com">
+          </div>
         </div>
+
+        <!-- <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo electrónico</label>
+          <div class="relative mt-1">
+            <input type="email" id="email" name="email" required autofocus class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2 0v10h12V5H4zm3 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+          </div>
+        </div> -->
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
-          <input type="password" id="password" name="password" required class="w-full px-3 py-2 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+          <div class="relative mt-1">
+            <input type="password" id="password" name="password" required class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <PasswordIcon />
+            </div>
+          </div>
+        </div>
+        <div>
+          <label for="confirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirmar Contraseña</label>
+          <div class="relative mt-1">
+            <input type="password" id="confirmPassword" name="confirmPassword" required class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <PasswordIcon />
+            </div>
+          </div>
         </div>
         <details class="group">
           <summary class="w-full px-4 py-2 font-bold text-white bg-gray-500 rounded-lg cursor-pointer group-open:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
@@ -51,18 +63,47 @@ const handleRegister = async (event: Event) => {
           <div class="mt-4 space-y-4">
             <div>
               <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre <span class="text-gray-500">(opcional)</span></label>
-              <input type="text" id="first_name" name="first_name" class="w-full px-3 py-2 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+              <div class="relative mt-1">
+                <input type="text" id="first_name" name="first_name" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10 2a2 2 0 00-2 2v1H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2V4a2 2 0 00-2-2zm-1 4V4h2v2H9zm-3 3a1 1 0 011-1h6a1 1 0 011 1v4a1 1 0 01-1 1H7a1 1 0 01-1-1V9z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
             </div>
             <div>
               <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Apellidos <span class="text-gray-500">(opcional)</span></label>
-              <input type="text" id="last_name" name="last_name" class="w-full px-3 py-2 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+              <div class="relative mt-1">
+                <input type="text" id="last_name" name="last_name" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10 2a2 2 0 00-2 2v1H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2V4a2 2 0 00-2-2zm-1 4V4h2v2H9zm-3 3a1 1 0 011-1h6a1 1 0 011 1v4a1 1 0 01-1 1H7a1 1 0 01-1-1V9z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
             </div>
             <div>
               <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre de usuario <span class="text-gray-500">(opcional)</span></label>
-              <input type="text" id="username" name="username" class="w-full px-3 py-2 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+              <div class="relative mt-1">
+                <input type="text" id="username" name="username" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10 2a2 2 0 00-2 2v1H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2V4a2 2 0 00-2-2zm-1 4V4h2v2H9zm-3 3a1 1 0 011-1h6a1 1 0 011 1v4a1 1 0 01-1 1H7a1 1 0 01-1-1V9z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </details>
+        <div class="flex items-start">
+          <div class="flex items-center h-5">
+            <input id="terms" name="terms" type="checkbox" required class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          </div>
+          <div class="ml-3 text-sm">
+            <label for="terms" class="font-medium text-gray-700 dark:text-gray-300">Acepto los <a href="/terms" target="_blank" class="text-blue-600 hover:underline dark:text-blue-500">términos y condiciones</a></label>
+          </div>
+        </div>
         <button type="submit" class="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Registrarse</button>
       </form>
       <p class="text-sm text-center text-gray-600 dark:text-gray-400">¿Ya tienes una cuenta? <a href="/login" class="text-blue-500 hover:underline">Inicia sesión</a></p>
@@ -72,10 +113,34 @@ const handleRegister = async (event: Event) => {
 
 
 <script is:inline define:vars={{API_BASE_URL}}>
-  document.getElementById('registerForm').addEventListener('submit', async (event) => {
+  // function enableTermsCheckbox() {
+  //   const checkbox = document.getElementById('terms');
+  //   checkbox.disabled = false;
+  // }
+
+  async function handleRegister(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
+
+    // if (data.password !== data.confirmPassword) {
+    //   alert('Las contraseñas no coinciden.');
+    //   return;
+    // }
+
+    // if (!data.terms) {
+    //   alert('Debes aceptar los términos y condiciones.');
+    //   return;
+    // }
+
+    // Eliminar confirmPassword de los datos antes de enviarlos al backend
+    delete data.confirmPassword;
+    delete data.terms;
+
+    // Eliminar campos opcionales si están vacíos
+    if (!data.first_name) delete data.first_name;
+    if (!data.last_name) delete data.last_name;
+    if (!data.username) delete data.username;
 
     try {
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -97,5 +162,9 @@ const handleRegister = async (event: Event) => {
       console.error('Error al registrar:', error);
       alert('Error al registrar.');
     }
-  });
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', handleRegister);
+
+  
 </script>
