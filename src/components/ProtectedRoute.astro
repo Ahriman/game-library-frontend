@@ -1,0 +1,41 @@
+---
+---
+
+<div id="protected-content" style="display: none;">
+  <slot></slot>
+</div>
+<p id="loading-message">Loading...</p>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token');
+    const loadingMessage = document.getElementById('loading-message');
+    const protectedContent = document.getElementById('protected-content');
+
+    if (!token) {
+      console.log('No token found, redirecting to login...');
+      localStorage.setItem('redirectAfterLogin', window.location.pathname);
+      window.location.href = '/login';
+    } else {
+      console.log('Token found, verifying with backend...');
+      // Verificar el token con el backend
+      const response = await fetch('http://localhost:3000/auth/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        console.log('Token is valid.');
+        if (loadingMessage) loadingMessage.style.display = 'none'; // Oculta el mensaje de carga
+        if (protectedContent) protectedContent.style.display = 'block'; // Muestra el contenido protegido
+      } else {
+        console.log('Token is invalid, redirecting to login...');
+        localStorage.setItem('redirectAfterLogin', window.location.pathname);
+        window.location.href = '/login';
+      }
+    }
+  });
+</script>

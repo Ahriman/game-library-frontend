@@ -94,6 +94,7 @@ const handleLogin = async (event: any) => {
 
       if (response.ok) {
           const { token } = await response.json();
+          console.log(token);
           localStorage.setItem('token', token);
           alert('Inicio de sesión exitoso.');
           window.location.href = '/';
