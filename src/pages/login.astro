@@ -4,34 +4,7 @@ import EmailIcon from '../icons/EmailIcon.astro';
 import PasswordIcon from '../icons/PasswordIcon.astro';
 import { API_BASE_URL } from '@/config/config.ts';
 
-const handleLogin = async (event: any) => {
-  event.preventDefault();
-  const formData = new FormData(event.target);
-  const data = Object.fromEntries(formData.entries());
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (response.ok) {
-      const { token } = await response.json();
-      localStorage.setItem('token', token);
-      alert('Inicio de sesión exitoso.');
-      window.location.href = '/';
-    } else {
-      const errorData = await response.json();
-      alert(`Error: ${errorData.message}`);
-    }
-  } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    alert('Error al iniciar sesión.');
-  }
-};
+export const prerender = true;
 ---
 
 <Layout title="Iniciar Sesión">
@@ -39,10 +12,6 @@ const handleLogin = async (event: any) => {
     <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow dark:bg-gray-800">
       <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-white">Iniciar Sesión</h2>
       <form id="loginForm" class="space-y-6">
-        <!-- <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo electrónico</label>
-          <input type="email" id="email" name="email" required class="w-full px-3 py-2 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
-        </div> -->
 
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo electrónico</label>
@@ -78,33 +47,36 @@ const handleLogin = async (event: any) => {
 </style>
 
 <script is:inline define:vars={{API_BASE_URL}}>
-  document.getElementById('loginForm').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
           method: 'POST',
           headers: {
-          'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
-      });
+        });
 
-      if (response.ok) {
+        if (response.ok) {
           const { token } = await response.json();
-          console.log(token);
-          localStorage.setItem('token', token);
+          document.cookie = `token=${token}; Path=/; Secure; SameSite=Strict`; // TODO: HttpOnly; no funciona en localhost al no utilizar https 
+
           alert('Inicio de sesión exitoso.');
-          window.location.href = '/';
-      } else {
+          window.location.href = '/library';
+        } else {
           const errorData = await response.json();
           alert(`Error: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        alert('Error al iniciar sesión.');
       }
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      alert('Error al iniciar sesión.');
-    }
+    });
   });
 </script>

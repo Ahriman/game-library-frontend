@@ -1,4 +1,6 @@
 ---
+const { isLoggedIn } = Astro.locals;
+
 const links = [
   { href: '/', text: 'Inicio', auth: false },
   { href: '/library', text: 'Biblioteca', auth: true },
@@ -41,31 +43,34 @@ const currentPath = Astro.url.pathname;
       <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
         {
           links.map(({ href, text, auth }) => (
-            <li class={auth ? 'auth-link' : 'guest-link'}>
-              <a 
-                href={href} 
-                class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                aria-current={currentPath === href ? 'page' : undefined}
-                data-view-transition
-                >
-                {text}
-              </a>
+            (auth && isLoggedIn) || (!auth && !isLoggedIn) ? (
+              <li>
+                <a 
+                  href={href} 
+                  class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  aria-current={currentPath === href ? 'page' : undefined}
+                  data-view-transition
+                  >
+                  {text}
+                </a>
 
-              {
-                currentPath === href && (
-                  <div transition:name="menu-line" class="border-b-2 border-blue-700"></div>
-                )
-              }
-            </li>
+                {
+                  currentPath === href && (
+                    <div transition:name="menu-line" class="border-b-2 border-blue-700"></div>
+                  )
+                }
+              </li>
+            ) : null
           ))
         }
 
-        <li class="auth-link" style="display: none;">
-          <button onclick="logout()" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-            Logout
-          </button>
-        </li>
-
+        {isLoggedIn && (
+          <li>
+            <button onclick="logout()" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+              Logout
+            </button>
+          </li>
+        )}
       </ul>
     </div>
     
@@ -76,7 +81,7 @@ const currentPath = Astro.url.pathname;
 <script is:inline>
 
   function logout() {
-    localStorage.removeItem('token');
+    document.cookie = 'token=; Path=/; Max-Age=-1;';
     window.location.href = '/';
   }
 
@@ -145,33 +150,6 @@ const currentPath = Astro.url.pathname;
 
     // Aplicar tema inicial basado en localStorage
     applyTheme(currentTheme);
-
-    // Verificar si el usuario está autenticado
-    // TODO: Mejorar
-    const token = localStorage.getItem('token');
-    const isAuthenticated = token !== null;
-
-    if (isAuthenticated) {
-      // Verificar el token con el backend
-      const response = await fetch('http://localhost:3000/auth/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        document.querySelectorAll('.guest-link').forEach(link => link.style.display = 'none');
-        document.querySelectorAll('.auth-link').forEach(link => link.style.display = 'block');
-      } else {
-        document.querySelectorAll('.auth-link').forEach(link => link.style.display = 'none');
-        document.querySelectorAll('.guest-link').forEach(link => link.style.display = 'block');
-      }
-    } else {
-      document.querySelectorAll('.auth-link').forEach(link => link.style.display = 'none');
-      document.querySelectorAll('.guest-link').forEach(link => link.style.display = 'block');
-    }
 
   });
 
