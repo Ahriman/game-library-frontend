@@ -19,7 +19,7 @@ export const prerender = true;
             <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
               <EmailIcon />
             </div>
-            <input type="email" id="email" name="email" required autofocus class="input-field" placeholder="name@gmail.com">
+            <input type="email" id="email" name="email" required autofocus class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@gmail.com">
           </div>
         </div>
 
@@ -29,7 +29,7 @@ export const prerender = true;
             <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
               <PasswordIcon />
             </div>
-            <input type="password" id="password" name="password" required class="input-field" placeholder="••••••••">
+            <input type="password" id="password" name="password" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="••••••••">
           </div>
         </div>
 
@@ -39,12 +39,6 @@ export const prerender = true;
     </div>
   </div>
 </Layout>
-
-<style>
-  .input-field {
-    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
-  }
-</style>
 
 <script is:inline define:vars={{API_BASE_URL}}>
   document.addEventListener('DOMContentLoaded', () => {
