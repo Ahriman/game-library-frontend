@@ -1,6 +1,8 @@
 {
   "name": "game-library-frontend",
   "type": "module",
+  "description": "Frontend de la biblioteca de videojuegos",
+  "author": "Marcos Alberto Sanmartín Pereira",
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
